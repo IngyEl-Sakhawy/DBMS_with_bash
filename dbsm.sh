@@ -143,12 +143,12 @@ esac
 
 function tables()
 {
-pk=""
 
+data="|  "
 
 
  read -p "Enter Number of Tables:" num
-  if [[ $num <= 0 ]]; then
+  if [[ $num -le 0 ]]; then
 	  echo "ReEnter A Positive Number!"
 	  tables
   fi
@@ -156,50 +156,69 @@ pk=""
 #do an 'if' if num is integer or not
 # already exised name choose another namedb 
 
- for (( i=0 ; i<$num ; i++)); do 
+ for (( i=1 ; i<=$num ; i++)); do 
         ls ~/database/"$namedb"
-	read -p "Enter Tables Name: " tname
-        while [ -f $tname ]
+	pk="*"
+	read -p "Enter Table $i Name: " tname
+        while [ -f ~/database/"$namedb"/"$tname" ];
 	do	
- 		read -p "Enter a Unique Name: " tname	
-		touch ~/database/namedb/"$tname"
+ 		echo " '$tname' already exits."
+		read -p "Enter a Unique Name: " tname	
+	
 	done
-       
+                touch ~/database/"$namedb"/"$tname"
 	read -p "Enter Number of Colums: " colnum
+	
+	
 
-	for(( counter=1 ; counter <= columns ; counter++)); do
-         read -p "Enter Name of Column $colnum:  " colname
+	for(( counter=1 ; counter <= "$colnum" ; counter++)); do
+         read -p "Enter Name of Column $counter:  " colname
+	 
+	 retval=1 
 	 echo "Type:"
 	 echo "     1.Intger"
 	 echo "     2.String"
-	 read ch
+
+	 while [ $retval = 1 ]; do
+		 retval=0
+	 read  -p "Enter Value: " ch
 	 case $ch in
-		 1) coltype="int"
+	  1) coltype="int"
 			 ;;
-		 2) coltype="str"
+	  2) coltype="str"
 			 ;;
-		 *) echo " Wrong Choice!"
+	  *) echo " Wrong Choice Enter A Valid Number!"
+ 	 	retval=1 
 			 ;;
 	 esac
-         	if [[ $pk == "" ]]; then
+  	 done
+
+         	if [[ $pk == "*" ]]; then
                   
                    echo "Primary key?"
                    read -p "[1. yes / 2.no] " choice
-		   case choice in
-			1) data+=$colname"|"$coltype"|"$pk
+
+		   case $choice in
+			1) data+=$colname":"$coltype":"$pk"  |  "
 				;;
-			2) data+=$colname"|"$coltype
+			2) data+=$colname":"$coltype"  |  "
 				;;
+				
 		   esac
+
 		  pk="?"
 	   	else  
-		   data+=$colname"|"$coltype	   
+		   data+=$colname":"$coltype"  |  "	   
 		fi
-
+		
 	 done
-	echo $data >> ~/database/$namedb/$tname		 
+         echo $data >> ~/database/$namedb/$tname
+	 
+		
+        
+ 		
 done
-
+tablesmenu "$namedb"
 }
 
 
