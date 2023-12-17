@@ -141,6 +141,23 @@ esac
 
 }
 
+
+function deletetable()
+{
+ read -p "Enter Table's Name: " tname
+
+ if [ -e ~/database/"$namedb"/"$tname" ]; then
+         rm ~/database/"$namedb"/"$tname"
+         echo "Successfully DELETED!" 
+ else
+         echo "Failed to delete !"
+
+ fi
+
+ tablesmenu "$namedb"
+}
+
+
 function tables()
 {
 
