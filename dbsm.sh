@@ -83,13 +83,13 @@ mainmenu
 function opendb
 {
    ls ~/database
-   read -p "Pick which DataBase: " name
+   read -p "Pick which DataBase: " namedb
 
-   if [[ -f ~/database/"$name" ]]; then
+   if [[ -f ~/database/"$namedb" ]]; then
 
-                 cd ~/database/"$name"
-		 ls ~/database/"$name"
-		 tablesmenu "$name"
+                 cd ~/database/"$namedb"
+		 ls ~/database/"$namedb"
+		 tablesmenu "$namedb"
           else
                   echo "No DataBase with that Name!"
    fi
