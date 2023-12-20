@@ -241,4 +241,4 @@ tablesmenu "$namedb"
 
 
 
-mainmenus
+mainmenu
