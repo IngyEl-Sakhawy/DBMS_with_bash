@@ -66,8 +66,8 @@ function listdb
 
 function deletedb
 {
-read -p "Enter DB to be Deleted: " name
-rm -r ~/database/"$name" 2>>/dev/null
+read -p "Enter DB to be Deleted: " namedb
+rm -r ~/database/"$namedb" 2>>/dev/null
 
        if [ $? = 0]; then
 
