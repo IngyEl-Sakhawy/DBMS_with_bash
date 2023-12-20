@@ -85,7 +85,7 @@ function opendb
    ls ~/database
    read -p "Pick which DataBase: " namedb
 
-   if [[ -f ~/database/"$namedb" ]]; then
+   if [[ -d ~/database/"$namedb" ]]; then
 
                  cd ~/database/"$namedb"
 		 ls ~/database/"$namedb"
