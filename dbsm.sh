@@ -157,12 +157,17 @@ function deletetable()
  tablesmenu "$namedb"
 }
 
+function deleterecord()
+{
+read -p "Enter Table's Name: " tname
+cat ~/database/"$namedb"/"$tname"
+read -p "Enter Data About Record You want To Delete: " input
+sed -i "/$input/d" ~/database/"$namedb"/"$tname"
+cat ~/database/"$namedb"/"$tname"
+}
 
 function tables()
 {
-
-
-
 
  read -p "Enter Number of Tables:" num
   if [[ $num -le 0 ]]; then
