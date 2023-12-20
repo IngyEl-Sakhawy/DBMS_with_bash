@@ -161,7 +161,7 @@ function deletetable()
 function tables()
 {
 
-data="|  "
+
 
 
  read -p "Enter Number of Tables:" num
@@ -175,7 +175,8 @@ data="|  "
 
  for (( i=1 ; i<=$num ; i++)); do 
         ls ~/database/"$namedb"
-	pk="*"
+	pk="pk"
+ 	data="|  "
 	read -p "Enter Table $i Name: " tname
         while [ -f ~/database/"$namedb"/"$tname" ];
 	do	
@@ -210,20 +211,21 @@ data="|  "
 	 esac
   	 done
 
-         	if [[ $pk == "*" ]]; then
+         	if [[ $pk == "pk" ]]; then
                   
                    echo "Primary key?"
                    read -p "[1. yes / 2.no] " choice
 
 		   case $choice in
 			1) data+=$colname":"$coltype":"$pk"  |  "
+   				pk="?"
 				;;
-			2) data+=$colname":"$coltype"  |  "
+			2) data+=$colname":"$coltype":- |  "
 				;;
 				
 		   esac
 
-		  pk="?"
+		  
 	   	else  
 		   data+=$colname":"$coltype"  |  "	   
 		fi
