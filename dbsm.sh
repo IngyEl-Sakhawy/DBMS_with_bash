@@ -179,13 +179,13 @@ read -p "Enter $firstfield:" input
  if [[ "$thirdfield" == "pk " ]]; then
 	lines=$(wc -l < ~/database/"$namedb"/"$tname")
 	for (( i=2 ; i<=$lines ; i++)); do
-val=$(head -n "$i" ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d '|' -f 1 )
+val=$(head -n "$i" ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d '|' -f 2 )
         
 	if [[ "$val" -eq "$input" ]]; then
         echo "invaled primary key"
 		retvalpk=1
         else
-        echo "valed primary key "
+        
 		retvalpk=0
         fi
 	done
