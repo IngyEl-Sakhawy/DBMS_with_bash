@@ -141,6 +141,63 @@ esac
 
 }
 
+function insert()
+{
+ data="| "
+ ls ~/database/"$namedb"
+
+ read -p "Enter Table's Name:" tname
+ cat ~/database/"$namedb"/"$tname"
+
+fnumber=$(awk -F'|' 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
+
+#start from second field and end at the n-1 field 
+#due to the decoraction purposes 
+ for (( j=2 ; j<$fnumber ; j++ )); do
+
+firstfield=$( head -n 1 ~/database/"$namedb"/"$tname" | cut -d "|" -f $j | cut -d ":" -f 1)
+
+secondfield=$( head -n 1  ~/database/"$namedb"/"$tname" | cut -d "|" -f $j | cut -d ":" -f 2)
+
+thirdfield=$( head -n 1 ~/database/"$namedb"/"$tname" | cut -d "|" -f $j | cut -d ":" -f 3)
+
+ retvaltype=1
+
+
+ while [[ "$retvaltype" -eq 1 || "$retvalpk" -eq 1 ]]; do
+read -p "Enter $firstfield:" input
+
+ if [[ "$secondfield" == "str" && "$input" =~ ^[a-zA-Z]+$ ]]; then
+   	echo "valid Input datatype"
+        retvaltype=0 
+ 	fi
+ if [[ "$secondfield" == "int" && "$input" =~ ^[0-9]+$ ]]; then
+   	echo "valid Input datatype"
+        retvaltype=0
+ 	fi
+
+ if [[ "$thirdfield" == "pk " ]]; then
+	lines=$(wc -l < ~/database/"$namedb"/"$tname")
+	for (( i=2 ; i<=$lines ; i++)); do
+val=$(head -n "$i" ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d '|' -f 1 )
+        
+	if [[ "$val" -eq "$input" ]]; then
+        echo "invaled primary key"
+		retvalpk=1
+        else
+        echo "valed primary key "
+		retvalpk=0
+        fi
+	done
+ fi
+ done
+data+=$input" |"
+ done	 
+echo $data >> ~/database/"$namedb"/"$tname"
+ 
+
+  
+}
 
 function deletetable()
 {
