@@ -305,6 +305,124 @@ tablesmenu "$namedb"
 }
 
 
+function displaycontent
+{
+  read -p "Enter Tabel's Name: " tname
+  if [ -e ~/database/"$namedb"/"$tname" ]; then
+	  echo "Content of $tname: \n"
+	  cat ~/database/"$namedb"/"$tname"
+  else
+	  echo "Table is not Existed!"
+  fi
+  tablesmenu "$namedb"
+}
 
+function deleterecord
+{
+	read -p "Enter Table Name: " tname
+	if [ -e ~/database/"$namedb"/"$tname" ]; then
+		echo "Record Deleted Successfully!"
+	else
+		echo "Table doesn't exist!"
+	fi
+	tablesmenu "$namedb"
+}
+
+function update {
+	read -p "Enter Table Name: " tname
+	if [ -e ~/database/"$namedb"/"$tname" ]; then
+		read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
+		IFS='|' read -ra columns <<< "$first_line"
+
+		pk_col_index=-1
+		for ((i=1;i<${#columns[@]};i++)); do
+			if [[ "${columns[i]}" == *":*"* ]]; then
+				pk_col_index=$i
+				break
+			fi
+		done
+
+		if [ "$pk_col_index" -eq -1 ]; then
+			echo "No Primary Key Found"
+			exit 1
+		fi
+
+		numrow=$(wc -l < ~/database/"$namedb"/"$tname")
+
+		numcol=$(awk 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
+
+		read -p "Enter The Record Primary Key " pkey
+		for ((j=2;j<=numrow;j++)); do
+			precord=$(head -n $j < ~/database/"$namedb"/"$tname"|tail -n 1 | cut -d "|" -f 2  )
+			if [[ "$precord" -eq "$pkey" ]]; then
+				oldrow=$(head -n $j < ~/database/"$namedb"/"$tname" | tail -n 1)
+				echo $oldrow
+				break
+			fi
+		done
+		
+		read -p "Enter Name You Want to modify " fname
+
+                for ((i=2;i<=numcol-1;i++)); do
+                        name=$(head -n 1 < ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i | cut -d ":" -f 1)
+			if [[ "$fname" == "age" ]]; then
+
+				echo "Enter Value of Data $fname"
+				echo $name
+			fi
+                done
+
+	else
+		echo "File Not Found!"
+	fi
+
+	tablesmenu "$namedb"
+	
+}
+
+
+function selrec {
+        read -p "Enter Table Name: " tname
+        if [ -e ~/database/"$namedb"/"$tname" ]; then
+                read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
+                echo "MetaData Of Table"
+                echo $first_line
+                IFS='|' read -ra columns <<< "$first_line"
+
+                pk_col_index=-1
+                for ((i=1;i<${#columns[@]};i++)); do
+                        if [[ "${columns[i]}" == *":*"* ]]; then
+                                pk_col_index=$i
+                                break
+                        fi
+                done
+
+                if [ "$pk_col_index" -eq -1 ]; then
+                        echo "No Primary Key Found"
+                        exit 1
+                fi
+
+                numrow=$(wc -l < ~/database/"$namedb"/"$tname")
+
+                numcol=$(awk 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
+
+                read -p "Enter The Record Primary Key " pkey
+                for ((j=2;j<=numrow;j++)); do
+                        precord=$(head -n $j < ~/database/"$namedb"/"$tname"|tail -n 1 | cut -d "|" -f 2 )
+                        echo $precord
+                        if [[ "$precord" -eq "$pkey" ]]; then
+                                oldrow=$(head -n $j < ~/database/"$namedb"/"$tname" | tail -n 1)
+                                echo $oldrow
+                                break
+                        fi
+                done
+
+        else
+                echo "File Not Found!"
+        fi
+
+        tablesmenu "$namedb"
+
+}
 
 mainmenu
