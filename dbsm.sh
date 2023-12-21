@@ -118,13 +118,13 @@ case $choice in
            ;;
         2) ls ~/database/$namedb
            ;;
-        3) deletetable
+        3) deletetable "$namedb"
            ;;
-        4) displaycontent
+        4) displaycontent 
            ;;
-	5) insert
+	5) insert "$namedb"
            ;;
-	6) deleterecord
+	6) deleterecord "$namedb"
            ;;
         7) update
            ;;
@@ -195,7 +195,7 @@ data+=$input" |"
  done	 
 echo $data >> ~/database/"$namedb"/"$tname"
  
-
+tablesmenu "$namedb"
   
 }
 
@@ -221,6 +221,8 @@ cat ~/database/"$namedb"/"$tname"
 read -p "Enter Data About Record You want To Delete: " input
 sed -i "/$input/d" ~/database/"$namedb"/"$tname"
 cat ~/database/"$namedb"/"$tname"
+
+tablesmenu "$namedb"
 }
 
 function tables()
