@@ -7,6 +7,10 @@
 clear
 echo "welcome to Our DataBase Management System"
 
+if [[ ! -d ~/database ]]; then
+	mkdir ~/database
+ 	echo "Database Created succeddfully"
+fi 
 
 
 function mainmenu {
@@ -47,58 +51,58 @@ function createdb
 {
 	echo "Welcome In Create Your DATABASE"
 	read -p "Choose a Name: " namedb
-	mkdir -p ~/database/"$namedb"
-       	             #'$?' holds the exit status of the lasted executed command 
-	if [ $? = 0 ]; then 
-          
-		  echo " Successfully Created DataBase! "
-		  tables "$namedb"
-          else
-		  echo " ERROR! "
+	while [ -d ~/database/"$namedb" ]; do
+ 		echo ""$namedb" already exits. "
+   		read -p "Enter a Unique Name:" namedb
+ 	done  
+ 	mkdir -p ~/database/"$namedb"
+       	
+	#'$?' holds the exit status of the lasted executed command 
+	if [ $? = 0 ]; then   
+	echo " Successfully Created DataBase! "
+	tables "$namedb"
+        else
+	echo " ERROR! "
 	fi		
-
 }
 
 function listdb
 {
   ls ~/database
+  mainmenu
 }
 
 function deletedb
 {
+ls ~/database
 read -p "Enter DB to be Deleted: " namedb
 rm -r ~/database/"$namedb" 2>>/dev/null
 
-       if [ $? = 0]; then
-
-                  echo " Successfully Deleted DataBase! "
-                  ls - ~/database
-          else
-                  echo " ERROR! "
-        fi
+if [[ $? = 0 ]]; then
+echo " Successfully Deleted DataBase! "
+ls  ~/database
+else
+echo " ERROR! "
+fi
 mainmenu
-
 }
 
 function opendb
 {
-   ls ~/database
-   read -p "Pick which DataBase: " namedb
-
-   if [[ -d ~/database/"$namedb" ]]; then
-
-                 cd ~/database/"$namedb"
-		 ls ~/database/"$namedb"
-		 tablesmenu "$namedb"
-          else
-                  echo "No DataBase with that Name!"
-   fi
-
+ls ~/database
+read -p "Pick which DataBase: " namedb
+if [[ -d ~/database/"$namedb" ]]; then
+cd ~/database/"$namedb"
+ls ~/database/"$namedb"
+tablesmenu "$namedb"
+else
+echo "No DataBase with that Name!"
+fi
 }
 
 function tablesmenu()
 {
-echo "~~~~Menu~~~~"
+echo "~~~~~~~~~~~~~Menu~~~~~~~~~~~~~"
 echo "|1. Create New Table         |"
 echo "|2. List Tables              |"
 echo "|3. Delete Table             |"
@@ -108,7 +112,7 @@ echo "|6. Delete Record from Table |"
 echo "|7. UpDate Table             |"
 echo "|8. Select Table             |"
 echo "|0. Exit                     |"
-echo "+~~~~~~~~~~+"
+echo "+~~~~~~~~~~~~~~~~~~~~~~~~~~~~+"
 
 read -p "~> " choice
 
@@ -117,25 +121,26 @@ case $choice in
 	1) tables "$namedb" 
            ;;
         2) ls ~/database/$namedb
+           tablesmenu "$namedb"	
            ;;
         3) deletetable "$namedb"
            ;;
-        4) displaycontent 
+        4) displaycontent "$namedb"
            ;;
 	5) insert "$namedb"
            ;;
 	6) deleterecord "$namedb"
            ;;
-        7) update
+        7) update "$namedb"
            ;;
-        8) seltable
+        8) seltable "$namedb"
            ;;
         0) exit 0
            ;;
         *) echo "Please Choose from Menu!"
            sleep 3
            clear
-           tablesmenu
+           tablesmenu "$namedb"
            ;;
 esac
 
@@ -179,7 +184,7 @@ read -p "Enter $firstfield:" input
  if [[ "$thirdfield" == "pk " ]]; then
 	lines=$(wc -l < ~/database/"$namedb"/"$tname")
 	for (( i=2 ; i<=$lines ; i++)); do
-val=$(head -n "$i" ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d '|' -f 2 )
+        val=$(head -n "$i" ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d '|' -f $j )
         
 	if [[ "$val" -eq "$input" ]]; then
         echo "invaled primary key"
@@ -201,24 +206,21 @@ tablesmenu "$namedb"
 
 function deletetable()
 {
- read -p "Enter Table's Name: " tname
-
- if [ -e ~/database/"$namedb"/"$tname" ]; then
-         rm ~/database/"$namedb"/"$tname"
-         echo "Successfully DELETED!" 
- else
-         echo "Failed to delete !"
-
- fi
-
- tablesmenu "$namedb"
+ls ~/database/"$namedb"
+read -p "Enter Table's Name: " tname
+if [ -e ~/database/"$namedb"/"$tname" ]; then
+rm ~/database/"$namedb"/"$tname"
+echo "Successfully DELETED!" 
+else
+echo "Failed to delete !"
+fi
+tablesmenu "$namedb"
 }
 
 function deleterecord()
 {
 ls ~/database/"$namedb"
 read -p "Enter Table's Name: " tname
-
 if [ -e ~/database/"$namedb"/"$tname" ]; then
 cat ~/database/"$namedb"/"$tname"
 read -p "Enter Data About Record You want To Delete: " input
@@ -228,41 +230,31 @@ echo "Record Deleted Successfully!"
 else
 echo "Table doesn't exist!"
 fi
-
- tablesmenu "$namedb"
+tablesmenu "$namedb"
 }
 
 function tables()
 {
-
- read -p "Enter Number of Tables:" num
-  if [[ $num -le 0 ]]; then
-	  echo "ReEnter A Positive Number!"
-	  tables
-  fi
-
+read -p "Enter Number of Tables:" num
+if [[ $num -le 0 ]]; then
+echo "ReEnter A Positive Number!"
+read -p "Enter Number of Tables:" num
+fi
 #do an 'if' if num is integer or not
 # already exised name choose another namedb 
-
- for (( i=1 ; i<=$num ; i++)); do 
-        ls ~/database/"$namedb"
-	pk="pk"
- 	data="|  "
-	read -p "Enter Table $i Name: " tname
-        while [ -f ~/database/"$namedb"/"$tname" ];
-	do	
- 		echo " '$tname' already exits."
-		read -p "Enter a Unique Name: " tname	
-	
-	done
-                touch ~/database/"$namedb"/"$tname"
-	read -p "Enter Number of Colums: " colnum
-	
-	
-
-	for(( counter=1 ; counter <= "$colnum" ; counter++)); do
-         read -p "Enter Name of Column $counter:  " colname
-	 
+for (( i=1 ; i<=$num ; i++ )); do 
+ls ~/database/"$namedb"
+pk="pk"
+data="|  "
+read -p "Enter Table $i Name: " tname
+while [ -f ~/database/"$namedb"/"$tname" ]; do	
+echo " '$tname' already exits."
+read -p "Enter a Unique Name: " tname		
+done
+touch ~/database/"$namedb"/"$tname"
+read -p "Enter Number of Colums: " colnum
+for(( counter=1 ; counter <= "$colnum" ; counter++)); do
+read -p "Enter Name of Column $counter: " colname	 
 	 retval=1 
 	 echo "Type:"
 	 echo "     1.Intger"
