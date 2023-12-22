@@ -290,7 +290,7 @@ read -p "Enter Name of Column $counter: " colname
 
 		  
 	   	else  
-		   data+=$colname":"$coltype"  |  "	   
+		   data+=$colname":"$coltype":"-"  |  "	   
 		fi
 		
 	 done
