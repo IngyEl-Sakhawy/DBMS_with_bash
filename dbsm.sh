@@ -217,22 +217,6 @@ fi
 tablesmenu "$namedb"
 }
 
-function deleterecord()
-{
-ls ~/database/"$namedb"
-read -p "Enter Table's Name: " tname
-if [ -e ~/database/"$namedb"/"$tname" ]; then
-cat ~/database/"$namedb"/"$tname"
-read -p "Enter Data About Record You want To Delete: " input
-sed -i "/$input/d" ~/database/"$namedb"/"$tname"
-cat ~/database/"$namedb"/"$tname"
-echo "Record Deleted Successfully!"
-else
-echo "Table doesn't exist!"
-fi
-tablesmenu "$namedb"
-}
-
 function tables()
 {
 read -p "Enter Number of Tables:" num
