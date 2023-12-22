@@ -196,7 +196,7 @@ read -p "Enter $firstfield:" input
 	done
  fi
  done
-data+=$input" |"
+data+=$input" | "
  done	 
 echo $data >> ~/database/"$namedb"/"$tname"
  
