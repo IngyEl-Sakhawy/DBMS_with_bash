@@ -216,13 +216,20 @@ function deletetable()
 
 function deleterecord()
 {
+ls ~/database/"$namedb"
 read -p "Enter Table's Name: " tname
+
+if [ -e ~/database/"$namedb"/"$tname" ]; then
 cat ~/database/"$namedb"/"$tname"
 read -p "Enter Data About Record You want To Delete: " input
 sed -i "/$input/d" ~/database/"$namedb"/"$tname"
 cat ~/database/"$namedb"/"$tname"
+echo "Record Deleted Successfully!"
+else
+echo "Table doesn't exist!"
+fi
 
-tablesmenu "$namedb"
+ tablesmenu "$namedb"
 }
 
 function tables()
@@ -306,7 +313,7 @@ tablesmenu "$namedb"
 
 
 function displaycontent
-{
+{ ls ~/database/"$namedb"
   read -p "Enter Tabel's Name: " tname
   if [ -e ~/database/"$namedb"/"$tname" ]; then
 	  echo "Content of $tname: \n"
@@ -317,16 +324,7 @@ function displaycontent
   tablesmenu "$namedb"
 }
 
-function deleterecord
-{
-	read -p "Enter Table Name: " tname
-	if [ -e ~/database/"$namedb"/"$tname" ]; then
-		echo "Record Deleted Successfully!"
-	else
-		echo "Table doesn't exist!"
-	fi
-	tablesmenu "$namedb"
-}
+
 
 function update {
 	read -p "Enter Table Name: " tname
