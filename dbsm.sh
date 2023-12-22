@@ -136,7 +136,7 @@ case $choice in
            ;;
         8) selrow "$namedb"
            ;;
-	9) selcolumn "$namedb"
+	9) selcol "$namedb"
 	   ;;
         0) exit 0
            ;;
@@ -368,7 +368,7 @@ function update()
          fi
  
          if [ "$(echo "$name" | cut -d ":" -f 2)" == "str" ]; then
-                 if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]
+                 if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]; then
                          sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
                          echo "Updated Table"
                  else
@@ -392,6 +392,7 @@ function update()
 
 function selrow()
 {
+	ls ~/database/"$namedb"
         read -p "Enter Table Name: " tname
         if [ -e ~/database/"$namedb"/"$tname" ]; then
                 read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
@@ -423,9 +424,11 @@ function selrow()
                                 oldrow=$(head -n $j < ~/database/"$namedb"/"$tname" | tail -n 1)
                                 echo "Selected Row : " $oldrow
                                 break
-                        fi
+			else
+				echo "Primary Key Is Not Found!"
+			fi
                 done
-
+1
         else
                 echo "File Not Found!"
         fi
@@ -436,6 +439,7 @@ function selrow()
 
 function selcol()
 {
+	ls ~/database/"$named"
         read -p "Enter Table Name: " tname
         if [ -e ~/database/"$namedb"/"$tname" ]; then
                 read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
@@ -467,6 +471,9 @@ function selcol()
 				for (( j=1;j<=numrow;j++ )); do
 					echo "| " $(head -n $j <~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i) " |"
 				done
+				break
+			else
+				echo "Name Is Not Existed In The Metadata!"
 				break
 			fi
 		done
@@ -514,7 +521,9 @@ function deleterec()
                                 echo "Deleted Row : " $oldrow
 				sed -i "/$oldrow/d" ~/database/"$namedb"/"$tname"
                                 break
-                        fi
+			else
+				echo "Primary Key Is Not Found!"
+			fi
                 done
 
 		echo "Table After Delete"
