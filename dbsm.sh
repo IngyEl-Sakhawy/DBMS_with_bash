@@ -110,7 +110,8 @@ echo "|4. Content of Table         |"
 echo "|5. Insert in Table          |"
 echo "|6. Delete Record from Table |"
 echo "|7. UpDate Table             |"
-echo "|8. Select Table             |"
+echo "|8. Select From Table By Row |"
+echo "|9. Select From Table By Col |"
 echo "|0. Exit                     |"
 echo "+~~~~~~~~~~~~~~~~~~~~~~~~~~~~+"
 
@@ -129,12 +130,14 @@ case $choice in
            ;;
 	5) insert "$namedb"
            ;;
-	6) deleterecord "$namedb"
+	6) deleterec "$namedb"
            ;;
         7) update "$namedb"
            ;;
-        8) seltable "$namedb"
+        8) selrow "$namedb"
            ;;
+	9) selcolumn "$namedb"
+	   ;;
         0) exit 0
            ;;
         *) echo "Please Choose from Menu!"
@@ -196,7 +199,7 @@ read -p "Enter $firstfield:" input
 	done
  fi
  done
-data+=$input" | "
+data+=$input" |"
  done	 
 echo $data >> ~/database/"$namedb"/"$tname"
  
@@ -274,7 +277,7 @@ read -p "Enter Name of Column $counter: " colname
 
 		  
 	   	else  
-		   data+=$colname":"$coltype":"-"  |  "	   
+		   data+=$colname":"$coltype":- |  "	   
 		fi
 		
 	 done
@@ -303,6 +306,7 @@ function displaycontent()
 
 function update() 
 {
+	ls ~/database/"$namedb"
 	read -p "Enter Table Name: " tname
 	if [ -e ~/database/"$namedb"/"$tname" ]; then
 		read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
@@ -352,29 +356,29 @@ function update()
         			fi
 
         			oldval=$(echo "$oldrow" | cut -d "|" -f $i)
-
-        			if [ "$(echo "$name" | cut -d ":" -f 2)" == "int" ]; then
+				if [ "$(echo "$name" | cut -d ":" -f 2)" == "int" ]; then
             				if [[ "$inp_val" =~ ^[0-9]+$ ]]; then
-                				sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
-		    					echo "Updated Table"
-     		       			else
-                				echo "Data Type Doesn't Match. Expected: int"
-                			break
-            				fi
-        			else
-            				if [ "$(echo "$name" | cut -d ":" -f 2)" == "str" ]; then
-					if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]
-						sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
-							echo "Updated Table"
-					else
-							echo "Data Type Doesn't Match. Expected: str"
-							break
-						fi
-					fi
-        			fi
+              					sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
+                 			echo "Updated Table"
+ 
+  			       else
+                 		echo "Data Type Doesn't Match. Expected: int"
+                 break
+             fi
+         fi
+ 
+         if [ "$(echo "$name" | cut -d ":" -f 2)" == "str" ]; then
+                 if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]
+                         sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
+                         echo "Updated Table"
+                 else
+                         echo "Data Type Doesn't Match. Expected: str"
+                         break
+                 fi
+        fi
+
     			fi
 		done
-		
 		cat ~/database/"$namedb"/"$tname"
 
 	else
@@ -386,7 +390,7 @@ function update()
 }
 
 
-function sel_rec_row()
+function selrow()
 {
         read -p "Enter Table Name: " tname
         if [ -e ~/database/"$namedb"/"$tname" ]; then
@@ -412,7 +416,7 @@ function sel_rec_row()
 
                 numcol=$(awk 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
 
-                read -p "Enter The Row You Want TO Select: " pkey
+                read -p "Enter The Primary Key TO Select Record: " pkey
                 for ((j=2;j<=numrow;j++)); do
                         precord=$(head -n $j < ~/database/"$namedb"/"$tname"|tail -n 1 | cut -d "|" -f 2 )
                         if [[ "$precord" -eq "$pkey" ]]; then
@@ -430,7 +434,7 @@ function sel_rec_row()
 
 }
 
-function sel_rec_col()
+function selcol()
 {
         read -p "Enter Table Name: " tname
         if [ -e ~/database/"$namedb"/"$tname" ]; then
@@ -524,8 +528,6 @@ function deleterec()
         tablesmenu "$namedb"
 
 }
-
-
 
 
 mainmenu
