@@ -541,25 +541,7 @@ function deleterec()
 
 }
 
-function insertrec()
-{
-	data="| "
-	read -p "Enter Table's Name: " tname
-	if [ -e ~/database/"$namedb"/"$tname" ]; then
-		numrow=$(wc -l < ~/database/"$namedb"/"$tname")
-                numcol=$(awk 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
-		for ((i=2;i<=numcol-3;i++)); do
-			feild=$(head -n 1 < ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i | cut -d ":" -f 1 )
-			echo "Enter $feild"
-			read -p "~> " val
-			data+=$val" | "	
-		done
-		echo $data >> ~/database/"$namedb"/"$tname"
-		echo "This Record Is Inserted: $data"
-	else
-		echo "Table Not Found!"
-	fi
-}
+
 
 
 mainmenu
