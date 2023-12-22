@@ -372,16 +372,25 @@ function update()
         			if [ "$(echo "$name" | cut -d ":" -f 2)" == "int" ]; then
             				if [[ "$inp_val" =~ ^[0-9]+$ ]]; then
                 				sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
+		    					echo "Updated Table"
      		       			else
                 				echo "Data Type Doesn't Match. Expected: int"
                 			break
             				fi
         			else
-            				sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
+            				if [ "$(echo "$name" | cut -d ":" -f 2)" == "str" ]; then
+					if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]
+						sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
+							echo "Updated Table"
+					else
+							echo "Data Type Doesn't Match. Expected: str"
+							break
+						fi
+					fi
         			fi
     			fi
 		done
-		echo "Updated Table"
+		
 		cat ~/database/"$namedb"/"$tname"
 
 	else
