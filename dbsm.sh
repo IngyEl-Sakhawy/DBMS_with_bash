@@ -16,13 +16,13 @@ fi
 
 function mainmenu {
 	
-echo "~~Menu~~"
+echo "~~~~~~~Menu~~~~~~~"
 echo "|1. Create New DB|"
 echo "|2. Open DB      |"
 echo "|3. List All DB  |"
 echo "|4. Delete DB    |"
 echo "|0. Exit         |"
-echo "+~~~~~~+"
+echo "+~~~~~~~~~~~~~~~~+"
 
 read -p "~> " choice
 
@@ -270,24 +270,24 @@ read -p "Enter Name of Column $counter: " colname
 	 esac
   	 done
 
-         	if [[ $pk == "pk" ]]; then
+         if [[ $pk == "pk" ]]; then
                   
-                   echo "Primary key?"
-                   read -p "[1. yes / 2.no] " choice
+         echo "Primary key?"
+         read -p "[1. yes / 2.no] " choice
 
-		   case $choice in
-			1) data+=$colname":"$coltype":"$pk"  |  "
-   				pk="?"
-				;;
-			2) data+=$colname":"$coltype":- |  "
-				;;
+	 case $choice in
+	 1) data+=$colname":"$coltype":"$pk"  |  "
+   		pk="?"
+		;;
+	 2) data+=$colname":"$coltype":- |  "
+		;;
 				
-		   esac
+	 esac
 
 		  
-	   	else  
-		   data+=$colname":"$coltype":- |  "	   
-		fi
+	 else  
+	 data+=$colname":"$coltype":- |  "	   
+	 fi
 		
 	 done
          echo $data >> ~/database/$namedb/$tname
