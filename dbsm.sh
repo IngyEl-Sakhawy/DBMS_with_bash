@@ -112,6 +112,7 @@ echo "|6. Delete Record from Table |"
 echo "|7. UpDate Table             |"
 echo "|8. Select From Table By Row |"
 echo "|9. Select From Table By Col |"
+echo "|10. Main Menu               |"
 echo "|0. Exit                     |"
 echo "+~~~~~~~~~~~~~~~~~~~~~~~~~~~~+"
 
@@ -138,6 +139,8 @@ case $choice in
            ;;
 	9) selcol "$namedb"
 	   ;;
+        10) mainmenu
+	   ;;
         0) exit 0
            ;;
         *) echo "Please Choose from Menu!"
@@ -155,7 +158,12 @@ function insert()
  ls ~/database/"$namedb"
 
  read -p "Enter Table's Name:" tname
+if [ -e ~/database/"$namedb"/"$tname" ]; then
  cat ~/database/"$namedb"/"$tname"
+else
+echo "Table doesn't Exist!"
+insert "$namedb"
+fi
 
 fnumber=$(awk -F'|' 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
 
