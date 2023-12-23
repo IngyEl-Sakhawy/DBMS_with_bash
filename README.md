@@ -28,7 +28,7 @@ This Bash script project is a simple database management system implemented in B
 
 1. Clone the repository:
 
-   git clone https://github.com/yourusername/BashDBMS.git
+   git clone https://github.com/IngyEl-Sakhawy/DBMS_with_bash.git
    
 3. Run The Script:
 
