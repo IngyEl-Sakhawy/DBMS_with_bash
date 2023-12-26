@@ -7,22 +7,24 @@
 #-------------------------------------------------------------Ingy's Functions---------------------------------------------------------------------
 clear
 echo "welcome to Our DataBase Management System"
-
+echo "-----------------------------------------"
+echo "Made By Ziad Elganzory & Ingy Elsakhawy  "
+echo "-----------------------------------------"
 if [[ ! -d ~/database ]]; then
 	mkdir ~/database
- 	echo "Database Created succeddfully"
+ 	echo "System Intialized Successfully"
 fi 
 
 
 function mainmenu {
 	
-echo "~~~~~~~Menu~~~~~~~"
+echo "~~Menu~~"
 echo "|1. Create New DB|"
 echo "|2. Open DB      |"
 echo "|3. List All DB  |"
 echo "|4. Delete DB    |"
 echo "|0. Exit         |"
-echo "+~~~~~~~~~~~~~~~~+"
+echo "+~~~~~~+"
 
 read -p "~> " choice
 
@@ -113,7 +115,6 @@ echo "|6. Delete Record from Table |"
 echo "|7. UpDate Table             |"
 echo "|8. Select From Table By Row |"
 echo "|9. Select From Table By Col |"
-echo "|10. Main Menu               |"
 echo "|0. Exit                     |"
 echo "+~~~~~~~~~~~~~~~~~~~~~~~~~~~~+"
 
@@ -140,8 +141,6 @@ case $choice in
            ;;
 	9) selcol "$namedb"
 	   ;;
-        10) mainmenu
-	   ;;
         0) exit 0
            ;;
         *) echo "Please Choose from Menu!"
@@ -159,12 +158,7 @@ function insert()
  ls ~/database/"$namedb"
 
  read -p "Enter Table's Name:" tname
-if [ -e ~/database/"$namedb"/"$tname" ]; then
  cat ~/database/"$namedb"/"$tname"
-else
-echo "Table doesn't Exist!"
-insert "$namedb"
-fi
 
 fnumber=$(awk -F'|' 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
 
@@ -208,7 +202,7 @@ read -p "Enter $firstfield:" input
 	done
  fi
  done
-data+=$input" |"
+data+=$input" | "
  done	 
 echo $data >> ~/database/"$namedb"/"$tname"
  
@@ -270,24 +264,24 @@ read -p "Enter Name of Column $counter: " colname
 	 esac
   	 done
 
-         if [[ $pk == "pk" ]]; then
+         	if [[ $pk == "pk" ]]; then
                   
-         echo "Primary key?"
-         read -p "[1. yes / 2.no] " choice
+                   echo "Primary key?"
+                   read -p "[1. yes / 2.no] " choice
 
-	 case $choice in
-	 1) data+=$colname":"$coltype":"$pk"  |  "
-   		pk="?"
-		;;
-	 2) data+=$colname":"$coltype":- |  "
-		;;
+		   case $choice in
+			1) data+=$colname":"$coltype":"$pk"  |  "
+   				pk="?"
+				;;
+			2) data+=$colname":"$coltype":- |  "
+				;;
 				
-	 esac
+		   esac
 
 		  
-	 else  
-	 data+=$colname":"$coltype":- |  "	   
-	 fi
+	   	else  
+		   data+=$colname":"$coltype":- |  "	   
+		fi
 		
 	 done
          echo $data >> ~/database/$namedb/$tname
@@ -352,8 +346,10 @@ function update()
 
 		for ((i=2; i<=numcol-1; i++)); do
     			name=$(head -n 1 < ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i | cut -d ":" -f 1)
+
+    			dt=$(head -n 1 < ~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i | cut -d ":" -f 2)
     			if [[ "$(echo "$fname" | tr -d '[:space:]')" == "$(echo "$name" | tr -d '[:space:]')" ]]; then
-        			read -rp "Enter Input According to $name DataType: " inp_val
+        			read -rp "Enter Input According to $dt DataType: " inp_val
 
         			if [ -z "$inp_val" ]; then
             				continue
@@ -365,30 +361,30 @@ function update()
         			fi
 
         			oldval=$(echo "$oldrow" | cut -d "|" -f $i)
-				if [ "$(echo "$name" | cut -d ":" -f 2)" == "int" ]; then
+				if [ "$dt" == "int" ]; then
             				if [[ "$inp_val" =~ ^[0-9]+$ ]]; then
-              					sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
-                 			echo "Updated Table"
+              					sed -i "s/$oldval/ $inp_val /" ~/database/"$namedb"/"$tname"
+                 				echo "Updated Table"
+						cat ~/database/"$namedb"/"$tname"
+					else
+                 				echo "Data Type Doesn't Match. Expected: int"
+             		   			break
+					fi
+		         	fi
  
-  			       else
-                 		echo "Data Type Doesn't Match. Expected: int"
-                 break
-             fi
-         fi
- 
-         if [ "$(echo "$name" | cut -d ":" -f 2)" == "str" ]; then
-                 if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]; then
-                         sed -i "s/$oldval/$inp_val/" ~/database/"$namedb"/"$tname"
-                         echo "Updated Table"
-                 else
-                         echo "Data Type Doesn't Match. Expected: str"
-                         break
-                 fi
-        fi
+ 		        if [ "$dt" == "str" ]; then
+				if [[ "$inp_val" =~ ^[a-zA-Z]+$ ]]; then
+                        		sed -i "s/$oldval/ $inp_val /" ~/database/"$namedb"/"$tname"
+                         		echo "Updated Table"
+					cat ~/database/"$namedb"/"$tname"
+                 		else
+                         		echo "Data Type Doesn't Match. Expected: str"
+                         		break
+                 		fi
+        		fi
 
     			fi
 		done
-		cat ~/database/"$namedb"/"$tname"
 
 	else
 		echo "File Not Found!"
@@ -433,11 +429,8 @@ function selrow()
                                 oldrow=$(head -n $j < ~/database/"$namedb"/"$tname" | tail -n 1)
                                 echo "Selected Row : " $oldrow
                                 break
-			else
-				echo "Primary Key Is Not Found!"
 			fi
                 done
-1
         else
                 echo "File Not Found!"
         fi
@@ -448,27 +441,13 @@ function selrow()
 
 function selcol()
 {
-	ls ~/database/"$named"
+	ls ~/database/"$namedb"
         read -p "Enter Table Name: " tname
         if [ -e ~/database/"$namedb"/"$tname" ]; then
                 read -r first_line < <(head -n 1 ~/database/"$namedb"/"$tname")
                 echo "MetaData Of Table"
                 echo $first_line
-                IFS='|' read -ra columns <<< "$first_line"
-
-                pk_col_index=-1
-                for ((i=1;i<${#columns[@]};i++)); do
-                        if [[ "${columns[i]}" == *":pk"* ]]; then
-                                pk_col_index=$i
-                                break
-                        fi
-                done
-
-                if [ "$pk_col_index" -eq -1 ]; then
-                        echo "No Primary Key Found"
-                        tablesmenu "$namedb"
-                fi
-		
+                
 		numrow=$(wc -l < ~/database/"$namedb"/"$tname")
 
 		numcol=$(awk 'NR==1{print NF}' ~/database/"$namedb"/"$tname")
@@ -480,9 +459,6 @@ function selcol()
 				for (( j=1;j<=numrow;j++ )); do
 					echo "| " $(head -n $j <~/database/"$namedb"/"$tname" | tail -n 1 | cut -d "|" -f $i) " |"
 				done
-				break
-			else
-				echo "Name Is Not Existed In The Metadata!"
 				break
 			fi
 		done
